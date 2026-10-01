@@ -1,0 +1,34 @@
+From: jaganalamin@gmail.com
+To: Kingljmusa@gmail.com
+Subject: A Email Project 
+Date: Mon, 28 Sep 2026 10:30:00 +0200
+Message-ID: <order-001@example.com>
+Content-Type: text/plain; charset="utf-8"
+
+Hello,
+
+if you want to save time and have good email automation working 24/7 contact me 
+
+Regards,
+Berlin King (Malamin)
+
+--boundary123
+Content-Type: text/html; charset="utf-8"
+
+<html>
+<body>
+<p>Hello Malamin,</p>
+
+<p>We would like to order
+<strong>100 units</strong> of Product A.</p>
+
+<p>Customer: Müller GmbH</p>
+
+<p>Delivery: Berlin</p>
+
+<p>Regards,<br>
+Anna Müller</p>
+</body>
+</html>
+
+--boundary123--
