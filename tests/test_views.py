@@ -21,21 +21,28 @@ def test_analyze_endpoint_returns_success(monkeypatch):
         quantity=25,
         delivery_location="Berlin",
     )
-
     fake_result = ProcessingResult(
-        email={
-            "sender": "jaganalamin@gmail.com",
-            "subject": "Test order",
-            "body": "Test email",
-        },
-        ai_response=(
-            '{"customer":"Test GmbH",'
-            '"product":"Laptop",'
-            '"quantity":25,'
-            '"delivery_location":"Berlin"}'
-        ),
-        validated_order=fake_order,
-    )
+    email={
+        "sender": "jaganalamin@gmail.com",
+        "subject": "Test order",
+        "body": "Test email",
+    },
+    ai_response=(
+        '{"customer":"Test GmbH",'
+        '"product":"Laptop",'
+        '"quantity":25,'
+        '"delivery_location":"Berlin"}'
+    ),
+    validated_order=fake_order,
+    crm_order={
+        "customer": "Test GmbH",
+        "product": "Laptop",
+        "quantity": 25,
+        "delivery_location": "Berlin",
+    },
+)
+
+    assert data["crm_order"]["customer"] == "Test GmbH"
 
     class FakePipeline:
 

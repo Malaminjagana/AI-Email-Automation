@@ -42,3 +42,38 @@ def test_pipeline_processes_email_without_real_llm(monkeypatch):
     assert order.product == "Laptop"
     assert order.quantity == 25
     assert order.delivery_location == "Berlin"
+
+def test_pipeline_sends_validated_order_to_crm(monkeypatch):
+
+    crm_calls = []
+
+    class FakeCRM:
+
+        def create_order(self, order):
+
+            crm_calls.append(order)
+
+            return {
+                "customer": order.customer,
+                "product": order.product,
+                "quantity": order.quantity,
+                "delivery_location": order.delivery_location,
+            }
+
+    monkeypatch.setattr(
+        "processing.pipeline.CRMService",
+        FakeCRM,
+    )
+
+    # Re-create the pipeline after replacing CRMService.
+    pipeline = EmailProcessingPipeline()
+
+    result = pipeline.process_file(
+        "sample_emails/order.eml"
+    )
+
+    assert len(crm_calls) == 1
+
+    assert crm_calls[0].customer == "Müller GmbH"
+
+    assert result.crm_order["customer"] == "Müller GmbH"

@@ -6,8 +6,7 @@ from ai.prompts import EMAIL_ANALYSIS_PROMPT
 from ai.retry import generate_with_retry
 from emails.services import EmailParser, EmailReader
 from processing.result import ProcessingResult
-
-
+from integrations.crm import CRMService
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +18,8 @@ class EmailProcessingPipeline:
         self.parser = EmailParser()
         self.llm = LLMService()
         self.extractor = OrderExtractor()
+        self.crm = CRMService()
+       
 
     def process_file(self, file_path: str):
 
@@ -64,10 +65,18 @@ class EmailProcessingPipeline:
 
             order = self.extractor.extract(
                 ai_response
-            )
+            ) 
+        
 
             logger.info(
                 "Order validated successfully."
+            )
+            crm_order = self.crm.create_order (
+                order 
+            )
+            
+            logger.info(
+                "Oder sucesfully send to CRM."
             )
 
             logger.info(
@@ -79,6 +88,8 @@ class EmailProcessingPipeline:
                 "ai_response": ai_response,
                 "validated_order": order,
             }
+         
+            
 
         except Exception:
             logger.exception(
