@@ -37,3 +37,6 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 A Django-based AI email-processing pipeline that parses incoming email content, sends normalized text to an LLM for structured information extraction, validates the result with Pydantic, handles failures through controlled application errors, and is covered by automated unit, pipeline, and API tests.
+
+python3 manage.py runserver
+ http://127.0.0.1:8000/emails/analyze/

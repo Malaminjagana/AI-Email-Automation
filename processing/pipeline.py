@@ -3,7 +3,10 @@ import logging
 from ai.extractor import OrderExtractor
 from ai.llm import LLMService
 from ai.prompts import EMAIL_ANALYSIS_PROMPT
+from ai.retry import generate_with_retry
 from emails.services import EmailParser, EmailReader
+from processing.result import ProcessingResult
+
 
 
 logger = logging.getLogger(__name__)
@@ -24,48 +27,62 @@ class EmailProcessingPipeline:
             file_path,
         )
 
-        raw_email = self.reader.read_file(
-            file_path
-        )
+        try:
 
-        logger.info(
-            "Email file read successfully."
-        )
+            raw_email = self.reader.read_file(
+                file_path
+            )
 
-        email_data = self.parser.parse(
-            raw_email
-        )
+            logger.info(
+                "Email file read successfully."
+            )
 
-        logger.info(
-            "Email parsed successfully."
-        )
+            email_data = self.parser.parse(
+                raw_email
+            )
 
-        prompt = EMAIL_ANALYSIS_PROMPT.format(
-            email_content=email_data["body"]
-        )
+            logger.info(
+                "Email parsed successfully."
+            )
 
-        logger.info(
-            "Sending email content to LLM."
-        )
+            prompt = EMAIL_ANALYSIS_PROMPT.format(
+                email_content=email_data["body"]
+            )
 
-        ai_response = self.llm.generate(
-            prompt
-        )
+            logger.info(
+                "Sending email content to LLM."
+            )
 
-        logger.info(
-            "LLM response received."
-        )
+            ai_response = generate_with_retry(
+                self.llm,
+                prompt,
+            )
 
-        order = self.extractor.extract(
-            ai_response
-        )
+            logger.info(
+                "LLM response received."
+            )
 
-        logger.info(
-            "Order validated successfully."
-        )
+            order = self.extractor.extract(
+                ai_response
+            )
 
-        return {
-            "email": email_data,
-            "ai_response": ai_response,
-            "validated_order": order,
-        }
+            logger.info(
+                "Order validated successfully."
+            )
+
+            logger.info(
+                "Email processing completed successfully."
+            )
+
+            return {
+                "email": email_data,
+                "ai_response": ai_response,
+                "validated_order": order,
+            }
+
+        except Exception:
+            logger.exception(
+                "Email processing failed: %s",
+                file_path,
+            )
+            raise

@@ -1,5 +1,5 @@
 # Automated testes command python3 -m pytest -v
-# python3 manage.py check
+# python3 manage.py runserver
 import pytest
 
 from ai.extractor import (
@@ -68,3 +68,19 @@ def test_invalid_order_raises_validation_error():
 
     with pytest.raises(OrderValidationError):
         extractor.extract(ai_response)
+
+def test_markdown_json_is_extracted():
+    response = """
+```json    
+{
+    "customer": "Test GmbH",
+    "product": "Laptop",
+    "quantity": 25,
+    "delivery_location": "Berlin"
+}
+
+
+
+
+"""
+

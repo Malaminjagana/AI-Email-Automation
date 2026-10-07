@@ -14,6 +14,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 
+
+class LLMTemporaryError(Exception):
+    """Raised when the LLM request fails temporarily."""
+    pass
+
+
+class LLMService:
+
+    def __init__(self):
+        self.client = genai.Client()
+
+    def generate(self, prompt: str) -> str:
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+            )
+
+            return response.text
+
+        except Exception as exc:
+            raise LLMTemporaryError(
+                "The LLM request failed temporarily."
+            ) from exc
+
+
 class LLMServiceError(Exception):
     """Raised when the LLM service cannot process a request."""
 

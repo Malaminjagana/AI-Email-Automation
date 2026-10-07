@@ -46,10 +46,10 @@ def analyze_test_email(request):
         )
 
         return JsonResponse({
-            "email": result["email"],
-            "ai_response": result["ai_response"],
+            "email": result.email,
+            "ai_response": result.ai_response,
             "validated_order": (
-                result["validated_order"].model_dump()
+                result.validated_order.model_dump()
             ),
         })
 

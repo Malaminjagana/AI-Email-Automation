@@ -1,5 +1,5 @@
 # Automated testes command python3 -m pytest -v
-# python3 manage.py check
+# python3 manage.py runserver
 
 import pytest
 from pydantic import ValidationError
@@ -60,3 +60,39 @@ def test_extra_fields_are_rejected():
             delivery_location="Berlin",
             confidence=0.99,
         )
+
+
+def test_customer_cannot_be_empty():
+
+    with pytest.raises(ValidationError):
+
+        OrderSchema(
+            customer="",
+            product="Laptop",
+            quantity=10,
+            delivery_location="Berlin",
+        )
+
+
+def test_product_cannot_be_empty():
+
+    with pytest.raises(ValidationError):
+
+        OrderSchema(
+            customer="Test GmbH",
+            product="",
+            quantity=10,
+            delivery_location="Berlin",
+        )
+
+
+def test_delivery_location_cannot_be_empty():
+
+    with pytest.raises(ValidationError):
+
+        OrderSchema(
+            customer="Test GmbH",
+            product="Laptop",
+            quantity=10,
+            delivery_location="",
+        )        

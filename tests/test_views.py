@@ -1,6 +1,6 @@
-
-# Automated testes command python3 -m pytest -v
-# python3 manage.py check
+# Automated tests command:
+# python3 -m pytest -v
+# python3 manage.py runserver
 
 from django.test import Client
 
@@ -9,6 +9,7 @@ from ai.extractor import (
     OrderValidationError,
 )
 
+from processing.result import ProcessingResult
 from processing.validator import OrderSchema
 
 
@@ -21,20 +22,20 @@ def test_analyze_endpoint_returns_success(monkeypatch):
         delivery_location="Berlin",
     )
 
-    fake_result = {
-        "email": {
-            "sender": "test@example.com",
+    fake_result = ProcessingResult(
+        email={
+            "sender": "jaganalamin@gmail.com",
             "subject": "Test order",
             "body": "Test email",
         },
-        "ai_response": (
+        ai_response=(
             '{"customer":"Test GmbH",'
             '"product":"Laptop",'
             '"quantity":25,'
             '"delivery_location":"Berlin"}'
         ),
-        "validated_order": fake_order,
-    }
+        validated_order=fake_order,
+    )
 
     class FakePipeline:
 
@@ -56,11 +57,20 @@ def test_analyze_endpoint_returns_success(monkeypatch):
 
     data = response.json()
 
-    assert data["validated_order"]["customer"] == "Test GmbH"
-    assert data["validated_order"]["quantity"] == 25
+    assert (
+        data["validated_order"]["customer"]
+        == "Test GmbH"
+    )
+
+    assert (
+        data["validated_order"]["quantity"]
+        == 25
+    )
 
 
-def test_analyze_endpoint_handles_invalid_json(monkeypatch):
+def test_analyze_endpoint_handles_invalid_json(
+    monkeypatch
+):
 
     class FakePipeline:
 
@@ -84,7 +94,10 @@ def test_analyze_endpoint_handles_invalid_json(monkeypatch):
 
     data = response.json()
 
-    assert data["error"]["type"] == "invalid_json"
+    assert (
+        data["error"]["type"]
+        == "invalid_json"
+    )
 
 
 def test_analyze_endpoint_handles_validation_error(

@@ -1,5 +1,5 @@
 # Automated testes command python3 -m pytest -v
-# python3 manage.py check
+# python3 manage.py runserver
 
 import json
 
