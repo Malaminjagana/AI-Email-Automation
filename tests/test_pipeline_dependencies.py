@@ -74,7 +74,7 @@ def test_pipeline_uses_injected_dependencies():
         llm=llm,
         crm=crm,
         erp=erp,
-        idempotency_store=IdempotencyStore(),
+        record_store=IdempotencyStore(),
     )
 
     result = pipeline.process_file("virtual-order.eml")

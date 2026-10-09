@@ -41,3 +41,22 @@ class IdempotencyStorePort(Protocol):
 
     def mark_as_processed(self, message_id: str) -> None:
         ...
+
+
+
+class ProcessingRecordStorePort(Protocol):
+
+    def claim(self, message_id: str) -> bool:
+        ...
+
+    def mark_completed(self, message_id: str) -> None:
+        ...
+
+    def mark_failed(
+        self,
+        message_id: str,
+        error: Exception,
+    ) -> None:
+        ...
+
+
