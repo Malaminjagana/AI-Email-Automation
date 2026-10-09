@@ -52,6 +52,7 @@ def analyze_test_email(request):
                 result.validated_order.model_dump()
             ),
             "crm_order": result.crm_order,
+            "erp_order": result.erp_order,
         })
 
     except LLMServiceError as exc:

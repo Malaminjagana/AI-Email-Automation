@@ -13,7 +13,9 @@ from processing.result import ProcessingResult
 from processing.validator import OrderSchema
 
 
-def test_analyze_endpoint_returns_success(monkeypatch):
+def test_analyze_endpoint_returns_success(
+    monkeypatch
+):
 
     fake_order = OrderSchema(
         customer="Test GmbH",
@@ -21,28 +23,33 @@ def test_analyze_endpoint_returns_success(monkeypatch):
         quantity=25,
         delivery_location="Berlin",
     )
-    fake_result = ProcessingResult(
-    email={
-        "sender": "jaganalamin@gmail.com",
-        "subject": "Test order",
-        "body": "Test email",
-    },
-    ai_response=(
-        '{"customer":"Test GmbH",'
-        '"product":"Laptop",'
-        '"quantity":25,'
-        '"delivery_location":"Berlin"}'
-    ),
-    validated_order=fake_order,
-    crm_order={
-        "customer": "Test GmbH",
-        "product": "Laptop",
-        "quantity": 25,
-        "delivery_location": "Berlin",
-    },
-)
 
-    assert data["crm_order"]["customer"] == "Test GmbH"
+    fake_result = ProcessingResult(
+        email={
+            "sender": "jaganalamin@gmail.com",
+            "subject": "Test order",
+            "body": "Test email",
+        },
+        ai_response=(
+            '{"customer":"Test GmbH",'
+            '"product":"Laptop",'
+            '"quantity":25,'
+            '"delivery_location":"Berlin"}'
+        ),
+        validated_order=fake_order,
+        crm_order={
+            "customer": "Test GmbH",
+            "product": "Laptop",
+            "quantity": 25,
+            "delivery_location": "Berlin",
+        },
+        erp_order={
+            "customer": "Test GmbH",
+            "product": "Laptop",
+            "quantity": 25,
+            "delivery_location": "Berlin",
+        },
+    )
 
     class FakePipeline:
 
@@ -71,6 +78,26 @@ def test_analyze_endpoint_returns_success(monkeypatch):
 
     assert (
         data["validated_order"]["quantity"]
+        == 25
+    )
+
+    assert (
+        data["crm_order"]["customer"]
+        == "Test GmbH"
+    )
+
+    assert (
+        data["crm_order"]["quantity"]
+        == 25
+    )
+
+    assert (
+        data["erp_order"]["customer"]
+        == "Test GmbH"
+    )
+
+    assert (
+        data["erp_order"]["quantity"]
         == 25
     )
 

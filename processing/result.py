@@ -8,4 +8,5 @@ class ProcessingResult(BaseModel):
     email: dict
     ai_response: str
     validated_order: OrderSchema
-    crm_order: dict 
+    crm_order: dict
+    erp_order: dict
