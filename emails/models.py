@@ -1,6 +1,6 @@
 from django.db import models
 
-# the  models here.
+# the  models is  here.
 
 
 
@@ -87,6 +87,11 @@ class EmailProcessingJob(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    processing_started_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         ordering = ["created_at"]
         indexes = [
@@ -95,6 +100,11 @@ class EmailProcessingJob(models.Model):
                 name="email_job_status_created_idx",
             ),
         ]
+    
+
+
+
+
 
     def __str__(self):
         return f"Job {self.pk}: {self.status} - {self.source_path}"
